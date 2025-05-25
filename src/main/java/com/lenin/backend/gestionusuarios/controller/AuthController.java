@@ -54,4 +54,21 @@ public class AuthController {
 
         return ResponseEntity.ok(usuarioRepository.findAll());
     }
+    @PostMapping("/register")
+public ResponseEntity<?> registrarUsuario(@RequestBody Usuario nuevoUsuario, HttpServletRequest request) {
+    String rol = (String) request.getAttribute("rol");
+    if (!"Admin".equalsIgnoreCase(rol)) {
+        return ResponseEntity.status(403).body(Map.of("error", "Acceso denegado"));
+    }
+
+    if (usuarioRepository.findByCorreo(nuevoUsuario.getCorreo()).isPresent()) {
+        return ResponseEntity.status(400).body(Map.of("error", "El correo ya está registrado"));
+    }
+
+    nuevoUsuario.setPassword(passwordEncoder.encode(nuevoUsuario.getPassword()));
+    usuarioRepository.save(nuevoUsuario);
+    return ResponseEntity.ok(Map.of("mensaje", "Usuario registrado correctamente"));
+}
+
+    
 }
