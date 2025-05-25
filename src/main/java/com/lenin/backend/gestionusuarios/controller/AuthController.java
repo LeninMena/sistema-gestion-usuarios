@@ -36,13 +36,15 @@ public class AuthController {
         }
 
         Usuario usuario = usuarioOpt.get();
-
         if (!passwordEncoder.matches(password, usuario.getPassword())) {
             return ResponseEntity.status(401).body(Map.of("error", "Credenciales incorrectas"));
         }
 
         String token = jwtUtil.generateToken(usuario.getCorreo(), usuario.getRol());
-        return ResponseEntity.ok(Map.of("token", token, "usuario", usuario));
+        return ResponseEntity.ok(Map.of(
+            "token", token,
+            "usuario", usuario
+        ));
     }
 
     @GetMapping("/usuarios")
