@@ -6,13 +6,15 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.util.Base64;
 import java.util.Date;
 
 @Component
 public class JwtUtil {
 
-    // ✅ Clave segura de al menos 512 bits (64 caracteres hex)
-    private static final String SECRET = "34345A6C795854376E554A75587534595A6B56316E454B6F796D48794A5A6D70";
+    // ✅ Clave segura (mínimo 512 bits en Base64)
+    private static final String SECRET = Base64.getEncoder()
+            .encodeToString(Keys.secretKeyFor(SignatureAlgorithm.HS512).getEncoded());
 
     private final Key key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET));
 

@@ -1,5 +1,6 @@
 package com.lenin.backend.gestionusuarios.controller;
 
+import com.lenin.backend.gestionusuarios.dto.LoginRequest;
 import com.lenin.backend.gestionusuarios.model.Usuario;
 import com.lenin.backend.gestionusuarios.repository.UsuarioRepository;
 import com.lenin.backend.gestionusuarios.security.JwtUtil;
@@ -26,17 +27,14 @@ public class AuthController {
     private PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Map<String, String> datos) {
-        String correo = datos.get("correo");
-        String password = datos.get("password");
-
-        Optional<Usuario> usuarioOpt = usuarioRepository.findByCorreo(correo);
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+        Optional<Usuario> usuarioOpt = usuarioRepository.findByCorreo(request.getCorreo());
         if (usuarioOpt.isEmpty()) {
             return ResponseEntity.status(401).body(Map.of("error", "Credenciales incorrectas"));
         }
 
         Usuario usuario = usuarioOpt.get();
-        if (!passwordEncoder.matches(password, usuario.getPassword())) {
+        if (!passwordEncoder.matches(request.getPassword(), usuario.getPassword())) {
             return ResponseEntity.status(401).body(Map.of("error", "Credenciales incorrectas"));
         }
 
