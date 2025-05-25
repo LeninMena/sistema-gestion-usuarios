@@ -36,8 +36,15 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
-        request.setAttribute("correo", jwtUtil.extractCorreo(token));
-        request.setAttribute("rol", jwtUtil.extractRol(token));
+        String correo = jwtUtil.extractCorreo(token);
+        String rol = jwtUtil.extractRol(token);
+
+        System.out.println("🔐 TOKEN VÁLIDO");
+        System.out.println("📧 Correo desde token: " + correo);
+        System.out.println("👤 Rol desde token: " + rol);
+
+        request.setAttribute("correo", correo);
+        request.setAttribute("rol", rol);
 
         filterChain.doFilter(request, response);
     }
@@ -46,11 +53,10 @@ public class JwtFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getServletPath();
         return path.startsWith("/swagger-ui") ||
-                path.startsWith("/v3/api-docs") ||
-                path.startsWith("/swagger-resources") ||
-                path.startsWith("/webjars") ||
-                path.startsWith("/configuration") ||
-                path.equals("/api/login");
+               path.startsWith("/v3/api-docs") ||
+               path.startsWith("/swagger-resources") ||
+               path.startsWith("/webjars") ||
+               path.startsWith("/configuration") ||
+               path.equals("/api/login");
     }
-    
 }

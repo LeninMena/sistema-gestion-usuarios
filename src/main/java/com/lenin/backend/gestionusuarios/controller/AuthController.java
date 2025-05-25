@@ -51,24 +51,23 @@ public class AuthController {
         if (!"Admin".equalsIgnoreCase(rol)) {
             return ResponseEntity.status(403).body(Map.of("error", "Acceso denegado"));
         }
-
         return ResponseEntity.ok(usuarioRepository.findAll());
     }
+
     @PostMapping("/register")
-public ResponseEntity<?> registrarUsuario(@RequestBody Usuario nuevoUsuario, HttpServletRequest request) {
-    String rol = (String) request.getAttribute("rol");
-    if (!"Admin".equalsIgnoreCase(rol)) {
-        return ResponseEntity.status(403).body(Map.of("error", "Acceso denegado"));
+    public ResponseEntity<?> register(@RequestBody Usuario nuevo, HttpServletRequest request) {
+        String rol = (String) request.getAttribute("rol");
+        if (rol == null || !rol.equalsIgnoreCase("Admin")) {
+            return ResponseEntity.status(403).body(Map.of("error", "Acceso denegado"));
+        }
+
+        if (usuarioRepository.findByCorreo(nuevo.getCorreo()).isPresent()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Correo ya registrado"));
+        }
+
+        nuevo.setId(0); // ignorar si lo mandan desde Swagger
+        nuevo.setPassword(passwordEncoder.encode(nuevo.getPassword()));
+        usuarioRepository.save(nuevo);
+        return ResponseEntity.ok(Map.of("mensaje", "Usuario registrado correctamente"));
     }
-
-    if (usuarioRepository.findByCorreo(nuevoUsuario.getCorreo()).isPresent()) {
-        return ResponseEntity.status(400).body(Map.of("error", "El correo ya está registrado"));
-    }
-
-    nuevoUsuario.setPassword(passwordEncoder.encode(nuevoUsuario.getPassword()));
-    usuarioRepository.save(nuevoUsuario);
-    return ResponseEntity.ok(Map.of("mensaje", "Usuario registrado correctamente"));
-}
-
-    
 }
