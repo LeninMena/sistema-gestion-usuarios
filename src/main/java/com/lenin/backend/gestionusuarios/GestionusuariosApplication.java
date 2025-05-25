@@ -5,9 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class GestionusuariosApplication {
-
-	public static void main(String[] args) {
-		SpringApplication.run(GestionusuariosApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(GestionusuariosApplication.class, args);
+    }
 }
